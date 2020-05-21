@@ -1,0 +1,13 @@
+#include "main.hpp"
+
+class EM{
+private:
+  vector<pair<double,double>> events;
+
+public:
+  EM(); 
+  ~EM();
+  Register(double,double);//イベントのセッター
+  Show_events(); //イベントのゲッター
+  
+}

@@ -9,5 +9,6 @@ typedef unsigned int u_int;
 #include "table.hpp"
 #include "dram.hpp"
 #include "global.hpp"
+#include "cloack.hpp"
 //typedef pair<Func, Packet*> event;
 extern Global global;
