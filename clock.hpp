@@ -8,4 +8,4 @@ public:
     ~Clock();
     double GetTime();
     void Advance();
-}
+};

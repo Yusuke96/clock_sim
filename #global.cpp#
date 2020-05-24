@@ -364,6 +364,7 @@ void Global::accessTable(Packet p){
 	e = pair<Func, Packet>(&Global::through, p);
       }
     }
+
   }else{
     if(num_packet >= 10001){
       table_stall_count[p.hash] += 1; //ストール回数のインクリ
