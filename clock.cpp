@@ -4,7 +4,7 @@ Clock::Clock(){
     time=0.0; 
 }
 
-Clock:~Clock(){;}
+Clock::~Clock(){;}
 
 double Clock::GetTime(){
     return time;

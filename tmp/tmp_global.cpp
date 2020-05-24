@@ -179,10 +179,10 @@ void Global::initSim(){
 
 void Global::showResult(){
   cout << res_sec << " sec\t"<< num_packet - np << " packets\t" << num_drop - nd << " drops\t" << num_of_through - nt << " troughs\t" << ((double)(num_hit - nh)/((double)(num_packet - np)-(double)(num_of_through - nt))) << " hit_ratio" << endl;
-  np = num_packet;
-  nd = num_drop;
-  nt = num_of_through;
-  nh = num_hit;
+	np = num_packet;
+	nd = num_drop;
+	nt = num_of_through;
+	nh = num_hit;
 }
 
 void Global::reportResult(){

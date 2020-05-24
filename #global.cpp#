@@ -150,7 +150,6 @@ void Global::initSim(){
     //Cacheごとのline数を計算(ex.32KB->1)
     if(cache[n].num_entry < 4){
       cache[n].num_line = 1;
-
     }else{
       cache[n].num_line = cache[n].num_entry / 4; // 4wayを想定
     }
@@ -180,10 +179,10 @@ void Global::initSim(){
 
 void Global::showResult(){
   cout << res_sec << " sec\t"<< num_packet - np << " packets\t" << num_drop - nd << " drops\t" << num_of_through - nt << " troughs\t" << ((double)(num_hit - nh)/((double)(num_packet - np)-(double)(num_of_through - nt))) << " hit_ratio" << endl;
-	np = num_packet;
-	nd = num_drop;
-	nt = num_of_through;
-	nh = num_hit;
+  np = num_packet;
+  nd = num_drop;
+  nt = num_of_through;
+  nh = num_hit;
 }
 
 void Global::reportResult(){
@@ -365,6 +364,7 @@ void Global::accessTable(Packet p){
 	e = pair<Func, Packet>(&Global::through, p);
       }
     }
+
   }else{
     if(num_packet >= 10001){
       table_stall_count[p.hash] += 1; //ストール回数のインクリ

@@ -1,8 +1,8 @@
 #include "main.hpp"
 
 EM::EM(){;}
-EM::~EM(){vector<pair<double,double>>.swap(events);}
-
+EM::~EM(){vector<pair<double,double>>().swap(events);}
+//EM::~EM(){free events;}
 double EM::Register(double time,double range){        
   pair<double,double> e; //イベント
   e.first = time;             //開始時刻
@@ -15,14 +15,15 @@ double EM::Register(double time,double range){
     cout << "Error: Incorrect event insert at " << e.first << "." << endl;
     exit(-1);
   }
-  
+  return e.second;
 }
 
 void EM::Show_events(){
   auto it = events.begin(); //イテレータ
   long i=0;
   while(it != events.end()){
-    cout << "Event " << i << "\t" << *it.first << " ~ " << *it.second << endl; 
+    cout << "Event " << i << "\t" << it->first << " ~ " << it->second << endl;
+    it++;
   }
   
 }

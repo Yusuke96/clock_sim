@@ -7,5 +7,7 @@ private:
 public:
   EM(); 
   ~EM();
-  Show_events(); //イベントのゲッター
-}
+  double Register(double,double);//イベントのセッター
+  void Show_events(); //イベントのゲッター
+  
+};
