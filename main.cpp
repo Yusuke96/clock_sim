@@ -2,21 +2,19 @@
 
 Global global;
 
-int main(int argc, char *argv[])
-{
-  Packet p;
-    global.readConf(argc, argv);
-    global.showConf();
-    global.initSim();
-    //for(int i=0; i<100000; i++){
-    global.inputPacket(p);
-    //global.inputFirstpacket();
-    //    int i = 0;
-    for(;;){
-      //     cout << i << endl;
-      global.processEvent();
-      //      i++;
-    }
-    
-    return 0;
+int main(int argc, char *argv[]){
+  Clock clock;
+  //Packet p;
+  global.readConf(argc, argv);
+  global.showConf();
+  //global.initSim;
+
+  // while(){
+  //   double current_time=clock.GetTime();
+  //   //decmod.process(current_time);
+  //   clock.Advance();//time += 0.000001
+  //   break;
+  // }
+
+  return 0;
 }
