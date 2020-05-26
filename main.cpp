@@ -1,12 +1,12 @@
 #include "main.hpp"
 
 Global global;
-//Clock clock;
 
 int main(int argc, char *argv[]){
+  Clock clock;
   //Packet p;
   global.readConf(argc, argv);
-  //global.showConf();
+  global.showConf();
   //global.initSim;
 
   // while(){
