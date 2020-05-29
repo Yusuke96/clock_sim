@@ -1,0 +1,53 @@
+#include "main.hpp"
+
+Selector::Selector(){
+  packet_id = 0;
+}
+
+Selector::~Selector(){;}
+
+void Selector::openTracefile(){
+  trace.open(global.tracefile.c_str(),ifstream::in);
+  if(!trace.is_open()){
+    cout << "[Selector::openTracefile] Error: Trace file can not opend." << endl;
+  }
+}
+
+bool Selector::inputPacket(double start_time, double end_time){
+  while(true){
+    Packet p;
+    string line;
+    packet_id++;
+    auto oldpos = trace.tellg(); //イテレータを記録
+
+    //一行読み込み
+    getline(trace, line);
+    if(trace.eof()){
+      return false;
+    }//読み込むパケット無し
+    p.id = packet_id;
+    //値の格納
+    istringstream is, ip;
+    string sip, dip;
+    is.str(line);
+    is >> p.timestamp >> p.length >> sip >> dip >> p.protocol >> p.sport >> p.dport >> p.comp_len >> p.decomp_len >> p.comp_ratio >> p.stream_id >> p.stream_size;
+
+    //一番初めのパケットの時刻を0とし、以降それとの差分でシミュレーションを行う
+    if(p.id == 1){
+      first_timestamp = p.timestamp;
+      p.timestamp = 0.0;
+    }else{
+      p.timestamp = p.timestamp - first_timestamp;
+    }
+    if(start_time <= p.timestamp && p.timestamp < end_time){
+      //*********************************************
+      //queue.push_back(p); //他のクラスを実装しないとメモリリークしそうなので今はコメントアウト
+    }else{
+      packet_id --;
+      trace.seekg(oldpos); // 現在処理するべきパケットではないので記録した位置までイテレータを戻して終了
+      break;
+    }
+  }
+  return true;
+}
+

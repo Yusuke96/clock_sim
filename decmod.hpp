@@ -1,15 +1,11 @@
 #include "main.hpp"
 
 class Decmod{
+private:
+  vector<Packet> queue;
 public:
-  //	PARAMETER
-  queue<Packet> q;
-  bool status;
-  double recent_time;
-  //	FUNCTION
   Decmod();
   ~Decmod();
-  void Enqueue(Packet*);
-  void Dequeue(Packet*);
-  void Update(Packet p);
+  void inQueue(Packet p);
+  void deQueue(Packet p);
 };
