@@ -11,7 +11,8 @@ Global::Global(){
   delay_table=0.0;
   delay_dram=0.0;
   size_queue=0;
-  
+  //clock cycle
+  clock_cycle = 0.00001;
 }
 
 Global::~Global(){
@@ -88,3 +89,10 @@ void Global::showConf(){
   cout << "CACHEDELAY " << delay_cache << endl;
   cout << "DRAMDELAY " << delay_dram << endl;
 }
+
+void Global::initSim(){
+  //mod = new Decmod[num_decmod];
+  //cache = new Cache[num_cache];
+}
+
+

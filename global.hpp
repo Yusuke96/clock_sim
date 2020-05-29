@@ -17,9 +17,12 @@ class Global{
   double delay_cache;
   double delay_dram;
   u_int size_queue;
+  //clock cycle
+  double clock_cycle;
   //---------------関数-----------------
   Global();
   ~Global();
   void readConf(int argc, char *argv[]);
   void showConf();
+  void initSim();
 };
