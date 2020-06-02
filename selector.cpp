@@ -37,11 +37,11 @@ bool Selector::inputPacket(double start_time, double end_time){
       first_timestamp = p.timestamp;
       p.timestamp = 0.0;
     }else{
-      p.timestamp = p.timestamp - first_timestamp;
+      p.timestamp = p.timestamp - first_timestamp ;
     }
     if(start_time <= p.timestamp && p.timestamp < end_time){
-      //*********************************************
-      //queue.push_back(p); //他のクラスを実装しないとメモリリークしそうなので今はコメントアウト
+      p.timestamp += global.clock_cycle;
+      q_selector.push(p);
     }else{
       packet_id --;
       trace.seekg(oldpos); // 現在処理するべきパケットではないので記録した位置までイテレータを戻して終了
@@ -49,5 +49,22 @@ bool Selector::inputPacket(double start_time, double end_time){
     }
   }
   return true;
+}
+
+bool Selector::allocatePacket(){
+  if(!q_selector.empty()){
+    Packet p = q_selector.front();
+    std::string sip = p.sip;
+    std::string dip = p.dip;
+    std::string f_tuple = sip + dip + to_string(p.sport) + to_string(p.dport) + to_string(p.protocol);
+    size_t hash = std::hash<std::string>()(f_tuple);
+    int mod_num = int(hash % global.num_decmod);
+    p.timestamp += global.clock_cycle;
+    q_selector.pop();
+    global.decmod[mod_num].inQueue(p); // 参照渡し?
+    return true;
+  }else{
+    return false;//queue is empty
+  }
 }
 

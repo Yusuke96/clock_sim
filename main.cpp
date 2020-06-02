@@ -4,17 +4,18 @@ Global global;
 
 int main(int argc, char *argv[]){
   Clock clock;
-  Selector selector;
+  //Selector selector;
   //Packet p;
   global.readConf(argc, argv);
   global.showConf();
-  //global.initSim;
-  selector.openTracefile();
+  global.initSim();
+  global.selector->openTracefile();
+
   bool si;
   
   while(true){
     double current_time = clock.GetTime();
-    si = selector.inputPacket(current_time, current_time + global.clock_cycle);
+    si = global.runSelector(current_time);
     //decmod.process(current_time);
     clock.Advance();
     if(!si){break;}

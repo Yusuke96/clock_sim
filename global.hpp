@@ -17,12 +17,18 @@ class Global{
   double delay_cache;
   double delay_dram;
   u_int size_queue;
-  //clock cycle
+  //clock
   double clock_cycle;
+  //Objects
+  Selector* selector;
+  Decmod* decmod;
+  
   //---------------関数-----------------
   Global();
   ~Global();
   void readConf(int argc, char *argv[]);
   void showConf();
   void initSim();
+  bool runSelector(double start_time);
+  bool runDecmod(double start_time);
 };

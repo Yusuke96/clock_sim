@@ -91,8 +91,20 @@ void Global::showConf(){
 }
 
 void Global::initSim(){
-  //mod = new Decmod[num_decmod];
+  selector = new Selector;
+  decmod = new Decmod[num_decmod];
   //cache = new Cache[num_cache];
 }
 
+bool Global::runSelector(double start_time){
+  bool si,sa;
+  si = selector->inputPacket(start_time,start_time + clock_cycle);
+  sa = selector->allocatePacket();
+  return si || sa;
+}
 
+bool Global::runDecmod(double start_time){
+  for(int i=0; i<global.num_decmod; i++){
+    Packet p = decmod[i].q_decmod.front();
+  }
+}

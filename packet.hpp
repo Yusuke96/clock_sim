@@ -5,9 +5,9 @@ public:
   //トレースファイルに記載済みの情報
   double timestamp;
   u_int length;
-  u_char sip[4];
-  u_char dip[4];
-  u_char protocol;
+  char sip[4];
+  char dip[4];
+  char protocol;
   u_int sport;
   u_int dport;
   long comp_len;

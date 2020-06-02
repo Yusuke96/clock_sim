@@ -12,5 +12,6 @@
 #include<unistd.h>
 #include<cmath>
 #include<boost/crc.hpp>
+#include<queue>
 using namespace std;
 using namespace boost;
