@@ -7,6 +7,13 @@ Selector::Selector(){
 Selector::~Selector(){;}
 
 void Selector::openTracefile(){
+  ifstream trace_tmp;
+  string line;
+  trace_tmp.open(global.tracefile.c_str(),ifstream::in);
+  while(getline(trace_tmp,line)){
+    global.num_of_packets++;
+  }
+  trace_tmp.close();
   trace.open(global.tracefile.c_str(),ifstream::in);
   if(!trace.is_open()){
     cout << "[Selector::openTracefile] Error: Trace file can not opend." << endl;
@@ -59,9 +66,15 @@ bool Selector::allocatePacket(){
     std::string f_tuple = sip + dip + to_string(p.sport) + to_string(p.dport) + to_string(p.protocol);
     size_t hash = std::hash<std::string>()(f_tuple);
     int mod_num = int(hash % global.num_decmod);
+    p.hash = hash;
     p.timestamp += global.clock_cycle;
     q_selector.pop();
     global.decmod[mod_num].inQueue(p); // 参照渡し?
+    if(global.decmod[mod_num].once_flg == true){
+      global.decmod[mod_num].next_event.first = p.timestamp + global.clock_cycle;
+      global.decmod[mod_num].next_event.second = &Decmod::deQueue;
+      global.decmod[mod_num].once_flg = false;
+    }
     return true;
   }else{
     return false;//queue is empty

@@ -17,6 +17,7 @@ public:
   long stream_size;
   //シミュレータで付加した情報
   long id;
+  size_t hash;
   //関数
   Packet();
   ~Packet();

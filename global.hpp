@@ -19,10 +19,20 @@ class Global{
   u_int size_queue;
   //clock
   double clock_cycle;
+  //results
+  long cache_hit;
+  long cache_miss;
+  double time_start;
+  double time_end;
+  double throughput;
+  //
+  long num_of_packets;
+  bool *decmod_empty;
   //Objects
   Selector* selector;
   Decmod* decmod;
-  
+  Cache* cache;
+  Dram* dram;
   //---------------関数-----------------
   Global();
   ~Global();
@@ -31,4 +41,6 @@ class Global{
   void initSim();
   bool runSelector(double start_time);
   bool runDecmod(double start_time);
+  bool checkComplete();
+  void reportResult();
 };

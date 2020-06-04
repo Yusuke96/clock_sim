@@ -7,7 +7,7 @@ typedef unsigned int u_int;
 #include "decmod.hpp"
 // #include "crc.hpp"
 // #include "table.hpp"
-// #include "dram.hpp"
+#include "dram.hpp"
 #include "selector.hpp"
 #include "global.hpp"
 extern Global global;

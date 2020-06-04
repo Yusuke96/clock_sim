@@ -10,16 +10,15 @@ int main(int argc, char *argv[]){
   global.showConf();
   global.initSim();
   global.selector->openTracefile();
-
-  bool si;
   
-  while(true){
+  while(!global.checkComplete()){
     double current_time = clock.GetTime();
-    si = global.runSelector(current_time);
-    //decmod.process(current_time);
+    global.runSelector(current_time);
+    global.runDecmod(current_time);
     clock.Advance();
-    if(!si){break;}
   }
 
+  global.reportResult();
+  
   return 0;
 }
