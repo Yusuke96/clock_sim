@@ -13,6 +13,13 @@ Global::Global(){
   size_queue=0;
   //clock cycle
   clock_cycle = 0.00001;
+  //results
+  cache_hit = 0;
+  cache_miss = 0;
+  time_start = 0.0;
+  time_end = 0.0;
+  //
+  num_of_packets = 0;
 }
 
 Global::~Global(){
@@ -88,11 +95,63 @@ void Global::showConf(){
   cout << "TABLEDELAY " << delay_table << endl;
   cout << "CACHEDELAY " << delay_cache << endl;
   cout << "DRAMDELAY " << delay_dram << endl;
+  cout << "----------------------------------------------" << endl;
 }
 
 void Global::initSim(){
-  //mod = new Decmod[num_decmod];
-  //cache = new Cache[num_cache];
+  selector = new Selector;
+  decmod = new Decmod[num_decmod];
+  cache = new Cache[num_decmod];
+  dram = new Dram;
+
+  decmod_empty = new bool[num_decmod];
+  
+  for(u_int i=0; i<num_decmod; i++){
+    decmod[i].mod_num = i;
+    cache[i].cache_num = i;
+    global.decmod_empty[i] = false;
+  }
+
 }
 
+bool Global::runSelector(double start_time){
+  bool si,sa;
+  si = selector->inputPacket(start_time,start_time + clock_cycle);
+  sa = selector->allocatePacket();
+  return si || sa;
+}
 
+bool Global::runDecmod(double start_time){
+  for(u_int i=0; i<global.num_decmod; i++){
+    if(decmod[i].q_decmod.empty()){
+      //cout << "empty: " << i << endl;
+      continue;
+    }else{
+      if(decmod[i].next_event.first <= start_time){
+	//cout << "decmod:" << i << endl;
+	void (Decmod::*func)() = decmod[i].next_event.second;
+	(decmod[i].*func)();
+      }
+    }
+  }
+
+  return true; // **
+}
+
+bool Global::checkComplete(){
+  bool result = true;
+  for(u_int i=0; i<num_decmod; i++){
+    result = result && decmod_empty[i];
+  }
+  return result;
+}
+
+void Global::reportResult(){
+  float hit_rate = float(cache_hit) / (float(cache_hit) + float(cache_miss));
+  
+  cout << "--------------------RESULT--------------------" << endl;
+  cout << "Number of packets: " << num_of_packets << endl;
+  cout << "Cache hit rate: " << hit_rate << endl;
+  //cout << "Decode throughput: " << throughput << endl;
+  cout << "----------------------------------------------" << endl;
+}

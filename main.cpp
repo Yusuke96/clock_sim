@@ -4,21 +4,21 @@ Global global;
 
 int main(int argc, char *argv[]){
   Clock clock;
-  Selector selector;
+  //Selector selector;
   //Packet p;
   global.readConf(argc, argv);
   global.showConf();
-  //global.initSim;
-  selector.openTracefile();
-  bool si;
+  global.initSim();
+  global.selector->openTracefile();
   
-  while(true){
+  while(!global.checkComplete()){
     double current_time = clock.GetTime();
-    si = selector.inputPacket(current_time, current_time + global.clock_cycle);
-    //decmod.process(current_time);
+    global.runSelector(current_time);
+    global.runDecmod(current_time);
     clock.Advance();
-    if(!si){break;}
   }
 
+  global.reportResult();
+  
   return 0;
 }

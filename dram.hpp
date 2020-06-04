@@ -1,13 +1,11 @@
 #include "main.hpp"
 
 class Dram{
+private:
+  map<size_t,u_int> table; // <stream_hash,no means>
 public:
-  //  PARAMETER
-  double next_time_read;
-  double next_time_write;
-  //FUNCTION
+  double next_time_r;
   Dram();
   ~Dram();
-  void Read(Packet);
-  void Write(Packet);
+  bool Access(Packet& p);
 };
