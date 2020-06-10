@@ -2,6 +2,7 @@
 
 Decmod::Decmod(){
   once_flg = true;
+  this->next_event.first = -1.0;
 }
 Decmod::~Decmod(){;}
 
@@ -16,6 +17,7 @@ void Decmod::deQueue(){
   if(!this->q_decmod.empty()){
     this->current_packet  = this->q_decmod.front();
     this->q_decmod.pop();
+    global.proc_size += this->current_packet.length;
     this->next_event.first += global.clock_cycle;
     this->next_event.second = &Decmod::cacheAccess;
   }else{
@@ -41,13 +43,13 @@ void Decmod::cacheRead(){
 }
 
 void Decmod::cacheWrite(){
-  cout << this->current_packet.id << endl;
+  //cout << this->current_packet.id << endl;
   //cout << "cacheWrite" << endl;
   global.cache[this->mod_num].entry[0] = this->current_packet.hash;
-  this->next_event.first += global.delay_cache;
   if(this->q_decmod.empty()){
     global.decmod_empty[this->mod_num] = true;
   }else{
+    this->next_event.first += global.delay_cache;
     this->next_event.second = &Decmod::deQueue;
   }
 }
@@ -88,3 +90,4 @@ void Decmod::decode(){
   }
 }
 
+void Decmod::none(){;}

@@ -22,4 +22,5 @@ public:
   void dramRead();
   void decode();
   void writeback();
+  void none();
 };

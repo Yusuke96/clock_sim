@@ -20,6 +20,7 @@ Global::Global(){
   time_end = 0.0;
   //
   num_of_packets = 0;
+  trace_empty = false;
 }
 
 Global::~Global(){
@@ -123,18 +124,13 @@ bool Global::runSelector(double start_time){
 
 bool Global::runDecmod(double start_time){
   for(u_int i=0; i<global.num_decmod; i++){
-    if(decmod[i].q_decmod.empty()){
-      //cout << "empty: " << i << endl;
-      continue;
-    }else{
-      if(decmod[i].next_event.first <= start_time){
-	//cout << "decmod:" << i << endl;
-	void (Decmod::*func)() = decmod[i].next_event.second;
-	(decmod[i].*func)();
-      }
+    if(decmod[i].next_event.first <= start_time && decmod[i].next_event.first > 0){
+      //cout << "decmod:" << i << endl;
+      //cout << decmod[i].next_event.first  << endl;
+      void (Decmod::*func)() = decmod[i].next_event.second;
+      (decmod[i].*func)();
     }
   }
-
   return true; // **
 }
 
@@ -142,16 +138,22 @@ bool Global::checkComplete(){
   bool result = true;
   for(u_int i=0; i<num_decmod; i++){
     result = result && decmod_empty[i];
+    //cout << decmod_empty[i] << " " ;
   }
+  //cout << endl;
   return result;
 }
 
 void Global::reportResult(){
   float hit_rate = float(cache_hit) / (float(cache_hit) + float(cache_miss));
-  
+  for(u_int i=0;i<num_decmod;i++){
+    if(time_end < decmod[i].current_packet.timestamp){
+      time_end = decmod[i].current_packet.timestamp;
+    }
+  }
   cout << "--------------------RESULT--------------------" << endl;
   cout << "Number of packets: " << num_of_packets << endl;
   cout << "Cache hit rate: " << hit_rate << endl;
-  //cout << "Decode throughput: " << throughput << endl;
+  cout << "Decode throughput: " << ((proc_size*8) / (time_end*1000*1000)) << " Mbps" << endl;
   cout << "----------------------------------------------" << endl;
 }

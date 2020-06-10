@@ -24,10 +24,12 @@ class Global{
   long cache_miss;
   double time_start;
   double time_end;
+  double proc_size;
   double throughput;
   //
   long num_of_packets;
   bool *decmod_empty;
+  bool trace_empty;
   //Objects
   Selector* selector;
   Decmod* decmod;
