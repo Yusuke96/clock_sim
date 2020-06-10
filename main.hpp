@@ -12,6 +12,6 @@ typedef unsigned int u_int;
 #include "global.hpp"
 extern Global global;
 #include "clock.hpp"
-#include "event_manager.hpp"
+//#include "event_manager.hpp"
 //typedef pair<Func, Packet*> event;
 //extern Global global;
