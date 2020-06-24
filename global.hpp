@@ -28,6 +28,7 @@ class Global{
   double throughput;
   //
   long num_of_packets;
+  long cache_capacity;
   bool *decmod_empty;
   bool trace_empty;
   //Objects
