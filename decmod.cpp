@@ -28,9 +28,13 @@ void Decmod::deQueue(){
 void Decmod::cacheAccess(){
   //cout << "cacheAccess" << endl;
   if(global.cache[this->mod_num].access(this->current_packet)){
+    //cout << "hit" << endl;
+    this->current_packet.hit = true;
     this->next_event.first += global.clock_cycle;
     this->next_event.second = &Decmod::cacheRead;
   }else{
+    //cout << "miss" << endl;
+    this->current_packet.hit = false;
     this->next_event.first += global.clock_cycle;
     this->next_event.second = &Decmod::dramAccess;
   }
@@ -44,8 +48,8 @@ void Decmod::cacheRead(){
 
 void Decmod::cacheWrite(){
   //cout << this->current_packet.id << endl;
-  //cout << "cacheWrite" << endl;
-  global.cache[this->mod_num].entry[0] = this->current_packet.hash;
+  global.cache[this->mod_num].entry.erase(global.cache[this->mod_num].entry.begin());
+  global.cache[this->mod_num].entry.push_back(this->current_packet.hash);
   if(this->q_decmod.empty()){
     global.decmod_empty[this->mod_num] = true;
   }else{
@@ -55,14 +59,16 @@ void Decmod::cacheWrite(){
 }
 
 void Decmod::dramAccess(){
-  //cout << "dramAccess" << endl;
+  //cout << "dram access" << this->current_packet.id << endl;
+  //cout << this->next_event.first << " " << global.dram->next_time_r << endl;
   if(this->next_event.first >= global.dram->next_time_r){
+    //cout << "*********************" << endl;
     this->next_event.first += global.clock_cycle;
     this->next_event.second = &Decmod::dramRead;
     global.dram->next_time_r += global.clock_cycle + global.delay_dram;
   }else{
     this->next_event.first = global.dram->next_time_r;
-    this->next_event.second = &Decmod::dramAccess;
+    this->next_event.second = &Decmod::dramRead;
     global.dram->next_time_r += global.delay_dram;
   }
 }
@@ -83,11 +89,10 @@ void Decmod::writeback(){
 void Decmod::decode(){
   //cout << "decode" << endl;
   this->next_event.first += global.delay_decode;
-  if(global.cache[this->mod_num].entry[0] == this->current_packet.hash){
+  if(this->current_packet.hit == true){
     this->next_event.second = &Decmod::cacheWrite;
   }else{
     this->next_event.second = &Decmod::writeback;
   }
 }
 
-void Decmod::none(){;}

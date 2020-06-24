@@ -18,6 +18,7 @@ public:
   //シミュレータで付加した情報
   long id;
   size_t hash;
+  bool hit;
   //関数
   Packet();
   ~Packet();

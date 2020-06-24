@@ -20,6 +20,7 @@ Global::Global(){
   time_end = 0.0;
   //
   num_of_packets = 0;
+  cache_capacity = 32000; //******************************
   trace_empty = false;
 }
 
@@ -56,12 +57,12 @@ void Global::readConf(int argc, char *argv[]){
 	}
       }
       if(!tag.compare("DECMODNUMBER")){num_decmod = (u_int)stoi(val);}
-      if(!tag.compare("GZIPDELAY")){delay_decode = stod(val);}
+      if(!tag.compare("GZIPDECDLAY")){delay_decode = stod(val);}
       if(!tag.compare("MAKEHUFFDELAY")){delay_makehuff = stod(val);}
       if(!tag.compare("QUEUESIZE")){size_queue = (u_int)stoi(val);}
       if(!tag.compare("TABLEDELAY")){delay_table = stod(val);}
       if(!tag.compare("CACHEDELAY")){delay_cache = stod(val);}
-      if(!tag.compare("DRAMDELAY")){delay_table = stod(val);}
+      if(!tag.compare("DRAMDELAY")){delay_dram = stod(val);}
     }
     //file close
     conffile.close();
@@ -110,9 +111,11 @@ void Global::initSim(){
   for(u_int i=0; i<num_decmod; i++){
     decmod[i].mod_num = i;
     cache[i].cache_num = i;
+    cache[i].num_entry = cache_capacity/cache_assign[i] ;
+    cache[i].entry.resize(cache[i].num_entry);
+    //cache[i].entry.push_back(0);
     global.decmod_empty[i] = false;
   }
-
 }
 
 bool Global::runSelector(double start_time){
@@ -126,7 +129,6 @@ bool Global::runDecmod(double start_time){
   for(u_int i=0; i<global.num_decmod; i++){
     if(decmod[i].next_event.first <= start_time && decmod[i].next_event.first > 0){
       //cout << "decmod:" << i << endl;
-      //cout << decmod[i].next_event.first  << endl;
       void (Decmod::*func)() = decmod[i].next_event.second;
       (decmod[i].*func)();
     }
@@ -147,8 +149,8 @@ bool Global::checkComplete(){
 void Global::reportResult(){
   float hit_rate = float(cache_hit) / (float(cache_hit) + float(cache_miss));
   for(u_int i=0;i<num_decmod;i++){
-    if(time_end < decmod[i].current_packet.timestamp){
-      time_end = decmod[i].current_packet.timestamp;
+    if(time_end < decmod[i].next_event.first){
+      time_end = decmod[i].next_event.first;
     }
   }
   cout << "--------------------RESULT--------------------" << endl;
