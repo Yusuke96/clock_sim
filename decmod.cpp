@@ -44,9 +44,9 @@ void Decmod::tableUpdate(){
   //global.table[this->mod_num].update(this->current_packet.hash,this->)
 }
 
-void Decmod::cacheAccess(){
+void Decmod::cacheAccess(){ // 使わない? その場合tablaAccessでキャッシュヒット率の計算が必要
   //cout << "cacheAccess" << endl;
-  if(global.cache[this->mod_num].access(this->current_packet)){
+  if(global.cache[this->current_cache_num].access(this->current_packet)){
     //cout << "hit" << endl;
     this->current_packet.hit = true;
     this->next_event.first += global.clock_cycle;
