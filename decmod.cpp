@@ -67,11 +67,13 @@ void Decmod::cacheRead(){
 
 void Decmod::cacheWrite(){
   //cout << this->current_packet.id << endl;
-  if(*global.cache[this->mod_num].entry.begin() != this->current_packet.hash){
-    global.table[this->mod_num].m[*global.cache[this->mod_num].entry.begin()].first = -1; //格納先をDRAM
+  // 辞書格納(LRU)
+  if(*global.cache[this->current_cache_num].entry.begin() != this->current_packet.hash){
+    global.table[this->mod_num].m[*global.cache[this->current_cache_num].entry.begin()].first = -1; //格納先をDRAM
   }
-  global.cache[this->mod_num].entry.erase(global.cache[this->mod_num].entry.begin());
-  global.cache[this->mod_num].entry.push_back(this->current_packet.hash);
+  global.cache[this->current_cahce_num].entry.erase(global.cache[this->current_cache_num].entry.begin());
+  global.cache[this->current_cache_num].entry.push_back(this->current_packet.hash);
+  // トランザクション最後の処理であるため、キューに次のパケットがあるか確認
   if(this->q_decmod.empty()){
     global.decmod_empty[this->mod_num] = true;
   }else{
@@ -130,6 +132,7 @@ void Decmod::decode(){
   }
   this->current_cache_num = cache_num_S + (this->current_packet.hash % (cacahe_num_L - cache_num_S + 1));
   this->current_entry_size = global.cache[this->current_cache_num].size_entry;
+  //イベント登録
   this->next_event.first += global.delay_decode;
   if(this->current_packet.hit == true){
     this->next_event.second = &Decmod::cacheWrite;
