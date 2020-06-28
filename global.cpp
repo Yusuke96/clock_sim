@@ -20,7 +20,7 @@ Global::Global(){
   time_end = 0.0;
   //
   num_of_packets = 0;
-  cache_capacity = 32000; //******************************
+  cache_capacity = 32; //******************************
   trace_empty = false;
 }
 
@@ -103,6 +103,7 @@ void Global::showConf(){
 void Global::initSim(){
   selector = new Selector;
   decmod = new Decmod[num_decmod];
+  table = new Table[num_decmod];
   cache = new Cache[num_decmod];
   dram = new Dram;
 
@@ -112,6 +113,7 @@ void Global::initSim(){
     decmod[i].mod_num = i;
     cache[i].cache_num = i;
     cache[i].num_entry = cache_capacity/cache_assign[i] ;
+    cache[i].size_entry = cache_assign[i];
     cache[i].entry.resize(cache[i].num_entry);
     //cache[i].entry.push_back(0);
     global.decmod_empty[i] = false;

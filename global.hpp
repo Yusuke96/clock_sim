@@ -34,6 +34,7 @@ class Global{
   //Objects
   Selector* selector;
   Decmod* decmod;
+  Table* table;
   Cache* cache;
   Dram* dram;
   //---------------関数-----------------

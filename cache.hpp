@@ -8,6 +8,7 @@ public:
   vector<size_t> entry;
   u_int cache_num;
   u_int num_entry;
+  u_int size_entry;
   Cache();
   ~Cache();
   bool access(Packet);
