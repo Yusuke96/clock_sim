@@ -37,8 +37,12 @@ void Decmod::tableAccess(){
     this->current_dict_size = global.table[this->mod_num].m[this->current_packet.hash].second;
     this->next_event.first = global.clock_cycle + global.delay_table;
     if(this->current_cache_num != -1){
+      global.cache_hit++;
+      this->current_packet.hit = true;
       this->next_event.second = &Decmod::cacheRead;
     }else{
+      global.cache_miss++;
+      this->current_packet.hit = false;
       this->next_event.second = &Decmod::dramRead;
     }
   }
