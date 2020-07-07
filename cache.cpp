@@ -1,6 +1,7 @@
 #include "main.hpp"
 
 Cache::Cache(){
+  this->entry.push_back(0);
 }
 
 Cache::~Cache(){;}
@@ -20,4 +21,3 @@ bool Cache::access(Packet p){
   global.cache_miss++;
   return false;
 }
-
