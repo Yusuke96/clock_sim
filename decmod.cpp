@@ -13,20 +13,25 @@ void Decmod::inQueue(Packet p){
 
 //--------------------------------------------------------------------
 void Decmod::deQueue(){
-  //cout << "deQueue" << endl;
   if(!this->q_decmod.empty()){
+    cout << "*Decmod[" << this->mod_num << "]: deQueue" << endl;
     this->current_packet  = this->q_decmod.front();
     this->q_decmod.pop();
     global.proc_size += this->current_packet.length;
     this->next_event.first += global.clock_cycle;
     //this->next_event.second = &Decmod::cacheAccess;
     this->next_event.second = &Decmod::tableAccess;
+    global.decmod_empty[this->mod_num] = false;
   }else{
+    cout << "*Decmod[" << this->mod_num << "]: wait(Q is empty)" << endl;
+    this->next_event.first += global.clock_cycle;
+    this->next_event.second = &Decmod::deQueue;
     global.decmod_empty[this->mod_num] = true;
   }
 }
 
 void Decmod::tableAccess(){
+  cout << "*Decmod[" << this->mod_num << "]: tableAccess" << endl;
   if(global.table[this->mod_num].access(this->current_packet.hash) == -1){
     // streamの先頭パケット
     this->next_event.first = global.clock_cycle + global.delay_table;
@@ -37,13 +42,11 @@ void Decmod::tableAccess(){
     this->current_dict_size = global.table[this->mod_num].m[this->current_packet.hash].second;
     this->next_event.first = global.clock_cycle + global.delay_table;
     if(this->current_cache_num != -1){
-      global.cache_hit++;
-      this->current_packet.hit = true;
-      this->next_event.second = &Decmod::cacheRead;
+      this->next_event.second = &Decmod::cacheAccess;
     }else{
-      global.cache_miss++;
       this->current_packet.hit = false;
-      this->next_event.second = &Decmod::dramRead;
+      global.cache_miss++;
+      this->next_event.second = &Decmod::dramAccess;
     }
   }
 }
@@ -61,7 +64,7 @@ void Decmod::dramRead(){
 }
 
 void Decmod::decode(){
-  //cout << "decode" << endl;
+  cout << "*Decmod[" << this->mod_num << "]: decode" << endl;
   // 辞書サイズの更新
   this->current_dict_size += this->current_packet.length;
   if(this->current_dict_size >= 32000){this->current_dict_size = 32000;} // 辞書サイズは最大で32KB
@@ -80,47 +83,59 @@ void Decmod::decode(){
       }
     }
   }
-  this->current_cache_num = cache_num_S + (this->current_packet.hash % (cache_num_L - cache_num_S + 1));
+  this->current_cache_num = cache_num_S + (this->current_packet.hash % (cache_num_L - cache_num_S+1));
+  cout << current_cache_num << endl;
   this->current_entry_size = global.cache[this->current_cache_num].size_entry;
   //イベント登録
   this->next_event.first += global.delay_decode;
-  if(this->current_packet.hit == true){
-    this->next_event.second = &Decmod::cacheWrite;
-  }else{
-    this->next_event.second = &Decmod::writeback;
-  }
-}
-
-void Decmod::cacheWrite(){
-  //cout << this->current_packet.id << endl;
-  // 辞書格納(LRU)
-  if(*global.cache[this->current_cache_num].entry.begin() != this->current_packet.hash){
-    global.table[this->mod_num].m[*global.cache[this->current_cache_num].entry.begin()].first = -1; //格納先をDRAM
-  }
-  global.cache[this->current_cache_num].entry.erase(global.cache[this->current_cache_num].entry.begin());
-  global.cache[this->current_cache_num].entry.push_back(this->current_packet.hash);
-  // トランザクションの最後であるため、キューに次のパケットがあるか確認
-  if(this->q_decmod.empty()){
-    global.decmod_empty[this->mod_num] = true;
-  }else{
-    this->next_event.first += global.delay_cache;
-    this->next_event.second = &Decmod::deQueue;
-  }
+  this->next_event.second = &Decmod::cacheWrite;
 }
 
 void Decmod::writeback(){
   //シミュレーション開始直後にエントリが空の場合はめんどくさいので今は考慮しない
   //cout << "writeBack" << endl;
+  global.table[this->mod_num].m[this->current_packet.hash].first = -1;
   this->next_event.first += global.delay_cache;
   this->next_event.second = &Decmod::cacheWrite;
 }
 
-void Decmod::tableUpdate(){
-  //global.table[this->mod_num].update(this->current_packet.hash,this->)
+void Decmod::cacheWrite(){
+  cout << "*Decmod[" << this->mod_num << "]: cacheWrite" << endl;
+  // 辞書格納(LRU)
+  size_t tmp_cache_index = this->current_cache_num;
+  // cacheから追い出しが発生する場合(write back)
+  if(*global.cache[this->current_cache_num].entry.begin() != this->current_packet.hash){
+    // 格納先をDRAMに指定
+    global.table[this->mod_num].m[*global.cache[this->current_cache_num].entry.begin()].first = -1;
+    this->current_cache_num = -1; // -1 == DRAM
+    this->next_event.first += global.delay_cache;
+  }
+  // エントリの置換
+  cout << "p1" << endl;
+  cout << "current_cache_num: " << this->current_cache_num << endl;
+  cout << "tmp_cache_num: " << tmp_cache_index << endl;
+  global.cache[tmp_cache_index].entry.erase(global.cache[tmp_cache_index].entry.begin());
+  global.cache[tmp_cache_index].entry.push_back(this->current_packet.hash);
+  cout << "p2" << endl;
+  this->next_event.first += global.delay_cache;
+  this->next_event.second = &Decmod::tableUpdate;
+}
+
+void Decmod::tableUpdate(){// どこにいれよう
+  cout << "*Decmod[" << this->mod_num << "]: tableUpdate" << endl;
+  global.table[this->mod_num].update(this->current_packet.hash,this->current_cache_num,current_dict_size);
+  // トランザクションの最後であるため、キューに次のパケットがあるか確認
+  if(this->q_decmod.empty()){
+    global.decmod_empty[this->mod_num] = true;
+  }else{
+    global.decmod_empty[this->mod_num] = false;
+  }
+  this->next_event.first += global.delay_table;
+  this->next_event.second = &Decmod::deQueue;
 }
 
 void Decmod::cacheAccess(){ // 使わない? その場合tablaAccessでキャッシュヒット率の計算が必要
-  //cout << "cacheAccess" << endl;
+  cout << "*Decmod[" << this->mod_num << "]: cacheAccess" << endl;
   if(global.cache[this->current_cache_num].access(this->current_packet)){
     //cout << "hit" << endl;
     this->current_packet.hit = true;
@@ -135,7 +150,7 @@ void Decmod::cacheAccess(){ // 使わない? その場合tablaAccessでキャッ
 }
 
 void Decmod::dramAccess(){
-  //cout << "dram access" << this->current_packet.id << endl;
+  cout << "*Decmod[" << this->mod_num << "]: dramAccess" << endl;
   //cout << this->next_event.first << " " << global.dram->next_time_r << endl;
   if(this->next_event.first >= global.dram->next_time_r){
     //cout << "*********************" << endl;

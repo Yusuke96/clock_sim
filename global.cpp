@@ -112,7 +112,7 @@ void Global::initSim(){
   for(u_int i=0; i<num_decmod; i++){
     decmod[i].mod_num = i;
     cache[i].cache_num = i;
-    cache[i].num_entry = cache_capacity/cache_assign[i] ;
+    cache[i].num_entry = cache_capacity/cache_assign[i];
     cache[i].size_entry = cache_assign[i];
     cache[i].entry.resize(cache[i].num_entry);
     //cache[i].entry.push_back(0);
@@ -156,8 +156,10 @@ void Global::reportResult(){
     }
   }
   cout << "--------------------RESULT--------------------" << endl;
+  cout << cache_hit << ",  " << cache_miss << endl;
   cout << "Number of packets: " << num_of_packets << endl;
   cout << "Cache hit rate: " << hit_rate << endl;
-  cout << "Decode throughput: " << std::fixed << std::setprecision(16) << ((proc_size*8) / (time_end*1000*1000)) << " Mbps" << endl;
+  cout << "Decode throughput: " << std::fixed << std::setprecision(8) << ((proc_size*8) / (time_end*1000*1000)) << " Mbps" << endl;
   cout << "----------------------------------------------" << endl;
 }
+
