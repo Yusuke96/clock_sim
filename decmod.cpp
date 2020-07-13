@@ -32,7 +32,7 @@ void Decmod::deQueue(){
 
 void Decmod::tableAccess(){
   cout << "*Decmod[" << this->mod_num << "]: tableAccess" << endl;
-  if(global.table[this->mod_num].access(this->current_packet.hash) == -1){
+  if(global.table[this->mod_num].access(this->current_packet.hash) == -2){//table miss
     // streamの先頭パケット
     this->next_event.first = global.clock_cycle + global.delay_table;
     this->next_event.second = &Decmod::decode;
@@ -66,7 +66,7 @@ void Decmod::dramRead(){
 void Decmod::decode(){
   cout << "*Decmod[" << this->mod_num << "]: decode" << endl;
   // 辞書サイズの更新
-  this->current_dict_size += this->current_packet.length;
+  this->current_dict_size += this->current_packet.decomp_len;
   if(this->current_dict_size >= 32000){this->current_dict_size = 32000;} // 辞書サイズは最大で32KB
   // 格納先の計算
   int cache_num_S=0, cache_num_L=7; // キャッシュ番号 cache_num_S ~ cache_num_L のいずれかに格納できる 
@@ -84,7 +84,6 @@ void Decmod::decode(){
     }
   }
   this->current_cache_num = cache_num_S + (this->current_packet.hash % (cache_num_L - cache_num_S+1));
-  cout << current_cache_num << endl;
   this->current_entry_size = global.cache[this->current_cache_num].size_entry;
   //イベント登録
   this->next_event.first += global.delay_decode;
@@ -105,18 +104,16 @@ void Decmod::cacheWrite(){
   size_t tmp_cache_index = this->current_cache_num;
   // cacheから追い出しが発生する場合(write back)
   if(*global.cache[this->current_cache_num].entry.begin() != this->current_packet.hash){
-    // 格納先をDRAMに指定
+    // 追い出されたストリームの格納先をDRAMに指定
     global.table[this->mod_num].m[*global.cache[this->current_cache_num].entry.begin()].first = -1;
-    this->current_cache_num = -1; // -1 == DRAM
-    this->next_event.first += global.delay_cache;
+    //this->current_cache_num = -1; // -1 == DRAM これいる？？
+    this->next_event.first += global.delay_cache + global.delay_table;
   }
   // エントリの置換
-  cout << "p1" << endl;
-  cout << "current_cache_num: " << this->current_cache_num << endl;
-  cout << "tmp_cache_num: " << tmp_cache_index << endl;
+  //cout << "current_cache_num: " << this->current_cache_num << endl;
+  //cout << "tmp_cache_num: " << tmp_cache_index << endl;
   global.cache[tmp_cache_index].entry.erase(global.cache[tmp_cache_index].entry.begin());
   global.cache[tmp_cache_index].entry.push_back(this->current_packet.hash);
-  cout << "p2" << endl;
   this->next_event.first += global.delay_cache;
   this->next_event.second = &Decmod::tableUpdate;
 }
