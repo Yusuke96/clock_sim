@@ -105,6 +105,7 @@ void Global::initSim(){
   decmod = new Decmod[num_decmod];
   table = new Table[num_decmod];
   cache = new Cache[num_decmod];
+  clock = new Clock;
   dram = new Dram;
 
   decmod_empty = new bool[num_decmod];
@@ -159,6 +160,7 @@ void Global::reportResult(){
   cout << cache_hit << ",  " << cache_miss << endl;
   cout << "Number of packets: " << num_of_packets << endl;
   cout << "Cache hit rate: " << hit_rate << " %" << endl;
+  cout << "Dram access: " << dram_read << endl;
   cout << "Time: " << time_end << " sec" << endl;
   cout << "Decoding throughput: " << std::fixed << std::setprecision(5) << ((proc_size*8) / (time_end*1000*1000*1000)) << " Gbps" << endl;
   cout << "----------------------------------------------" << endl;

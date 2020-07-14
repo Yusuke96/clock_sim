@@ -22,6 +22,7 @@ class Global{
   //results
   long cache_hit;
   long cache_miss;
+  long dram_read;
   double time_start;
   double time_end;
   double proc_size;
@@ -32,6 +33,7 @@ class Global{
   bool *decmod_empty;
   bool trace_empty;
   //Objects
+  Clock* clock;
   Selector* selector;
   Decmod* decmod;
   Table* table;

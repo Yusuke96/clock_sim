@@ -19,7 +19,8 @@ void Decmod::deQueue(){
     this->q_decmod.pop();
     global.proc_size += this->current_packet.length;
     //this->next_event.first += global.clock_cycle;
-    this->next_event.first = this->current_packet.timestamp;
+    //this->next_event.first = this->current_packet.timestamp;
+    this->next_event.first = global.clock->GetTime();
     //this->next_event.second = &Decmod::cacheAccess;
     this->next_event.second = &Decmod::tableAccess;
     global.decmod_empty[this->mod_num] = false;
@@ -60,6 +61,7 @@ void Decmod::cacheRead(){
 
 void Decmod::dramRead(){
   //cout << "dramRead" << endl;
+  global.dram_read++;
   this->next_event.first += global.delay_dram;
   this->next_event.second = &Decmod::decode;
 }
