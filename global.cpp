@@ -158,8 +158,9 @@ void Global::reportResult(){
   cout << "--------------------RESULT--------------------" << endl;
   cout << cache_hit << ",  " << cache_miss << endl;
   cout << "Number of packets: " << num_of_packets << endl;
-  cout << "Cache hit rate: " << hit_rate << endl;
-  cout << "Decode throughput: " << std::fixed << std::setprecision(6) << ((proc_size*8) / (time_end*1000*1000*1000)) << " Gbps" << endl;
+  cout << "Cache hit rate: " << hit_rate << " %" << endl;
+  cout << "Time: " << time_end << " sec" << endl;
+  cout << "Decoding throughput: " << std::fixed << std::setprecision(5) << ((proc_size*8) / (time_end*1000*1000*1000)) << " Gbps" << endl;
   cout << "----------------------------------------------" << endl;
 }
 

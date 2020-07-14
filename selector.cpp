@@ -70,7 +70,9 @@ bool Selector::allocatePacket(){
     p.hash = hash;
     p.timestamp += global.clock_cycle;
     q_selector.pop();
+    //cout << p.timestamp << endl;
     global.decmod[mod_num].inQueue(p); // 参照渡し?
+    
     if(global.decmod[mod_num].q_decmod.empty() || global.decmod[mod_num].once_flg == true){
       global.decmod[mod_num].next_event.first = p.timestamp + global.clock_cycle;
       global.decmod[mod_num].next_event.second = &Decmod::deQueue;
