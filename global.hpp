@@ -28,7 +28,8 @@ class Global{
   double proc_size;
   double throughput;
   //
-  long num_of_packets;
+  long num_of_packets; // トレースのパケット数
+  long num_of_proc_packets; // 復号モジュールが処理したパケット数
   long cache_capacity;
   bool *decmod_empty;
   bool trace_empty;

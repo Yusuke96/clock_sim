@@ -12,7 +12,7 @@ Global::Global(){
   delay_dram=0.0;
   size_queue=0;
   //clock cycle
-  clock_cycle = 0.00001;
+  clock_cycle = 1.0/(1000*1000);
   //results
   cache_hit = 0;
   cache_miss = 0;
@@ -151,6 +151,7 @@ bool Global::checkComplete(){
 
 void Global::reportResult(){
   float hit_rate = float(cache_hit) / (float(cache_hit) + float(cache_miss));
+  hit_rate = float(cache_hit) / float(num_of_proc_packets);
   for(u_int i=0;i<num_decmod;i++){
     if(time_end < decmod[i].next_event.first){
       time_end = decmod[i].next_event.first;
@@ -160,7 +161,7 @@ void Global::reportResult(){
   cout << cache_hit << ",  " << cache_miss << endl;
   cout << "Number of packets: " << num_of_packets << endl;
   cout << "Cache hit rate: " << hit_rate << " %" << endl;
-  cout << "Dram access: " << dram_read << endl;
+  cout << "Dram access rate: " << float(dram_read)/float(num_of_proc_packets) << " %" << endl;
   cout << "Time: " << time_end << " sec" << endl;
   cout << "Decoding throughput: " << std::fixed << std::setprecision(5) << ((proc_size*8) / (time_end*1000*1000*1000)) << " Gbps" << endl;
   cout << "----------------------------------------------" << endl;

@@ -39,7 +39,7 @@ bool Selector::inputPacket(double start_time, double end_time){
     string sip, dip;
     is.str(line);
     is >> p.timestamp >> p.length >> sip >> dip >> p.protocol >> p.sport >> p.dport >> p.comp_len >> p.decomp_len >> p.comp_ratio >> p.stream_id >> p.stream_size;
-
+    p.timestamp = global.clock_cycle * p.id; // ************ for throughput *******
     //一番初めのパケットの時刻を0とし、以降それとの差分でシミュレーションを行う
     if(p.id == 1){
       first_timestamp = p.timestamp;

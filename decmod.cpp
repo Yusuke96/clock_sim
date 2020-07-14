@@ -15,6 +15,7 @@ void Decmod::inQueue(Packet p){
 void Decmod::deQueue(){
   if(!this->q_decmod.empty()){
     //cout << "*Decmod[" << this->mod_num << "]: deQueue" << endl;
+    global.num_of_proc_packets++;
     this->current_packet = this->q_decmod.front();
     this->q_decmod.pop();
     global.proc_size += this->current_packet.length;
