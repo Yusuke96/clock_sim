@@ -22,6 +22,7 @@ Global::Global(){
   num_of_packets = 0;
   cache_capacity = 32; //******************************
   trace_empty = false;
+  
 }
 
 Global::~Global(){
