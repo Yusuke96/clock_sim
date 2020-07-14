@@ -31,6 +31,7 @@ bool Selector::inputPacket(double start_time, double end_time){
     getline(trace, line);
     if(trace.eof()){
       global.trace_empty = true;
+      global.next_time = 55555.0;
       return false;
     }//読み込むパケット無し
     p.id = packet_id;
@@ -51,6 +52,7 @@ bool Selector::inputPacket(double start_time, double end_time){
       p.timestamp += global.clock_cycle;
       q_selector.push(p);
     }else{
+      global.next_time = p.timestamp;
       packet_id --;
       trace.seekg(oldpos); // 現在処理するべきパケットではないので記録した位置までイテレータを戻して終了
       break;

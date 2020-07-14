@@ -19,6 +19,7 @@ class Global{
   u_int size_queue;
   //clock
   double clock_cycle;
+  double next_time;
   //results
   long cache_hit;
   long cache_miss;

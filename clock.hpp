@@ -2,10 +2,11 @@
 
 class Clock{
 private:
-    double time=0.0;
+  double time=0.0;
 public:
-    Clock();
-    ~Clock();
-    double GetTime();
-    void Advance();
+  Clock();
+  ~Clock();
+  double GetTime();
+  void SetTime(double t);
+  void Advance();
 };

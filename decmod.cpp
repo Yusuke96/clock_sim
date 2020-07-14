@@ -16,6 +16,7 @@ void Decmod::deQueue(){
   if(!this->q_decmod.empty()){
     //cout << "*Decmod[" << this->mod_num << "]: deQueue" << endl;
     global.num_of_proc_packets++;
+    //cout << global.num_of_proc_packets << endl;
     this->current_packet = this->q_decmod.front();
     this->q_decmod.pop();
     global.proc_size += this->current_packet.length;
@@ -132,6 +133,7 @@ void Decmod::tableUpdate(){// どこにいれよう
     global.decmod_empty[this->mod_num] = false;
   }
   this->next_event.first += global.delay_table;
+  cout << this->next_event.first << endl;
   this->next_event.second = &Decmod::deQueue;
 }
 

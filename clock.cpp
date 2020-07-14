@@ -10,6 +10,10 @@ double Clock::GetTime(){
     return time;
 }
 
+void Clock::SetTime(double t){
+  time = t;
+}
+
 void Clock::Advance(){
   time = time + global.clock_cycle; //クロック周波数を1GHzとしている
 }

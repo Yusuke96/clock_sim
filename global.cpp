@@ -12,7 +12,7 @@ Global::Global(){
   delay_dram=0.0;
   size_queue=0;
   //clock cycle
-  clock_cycle = 1.0/(1000*1000);
+  clock_cycle = 1.0/(1000*1000*1000);
   //results
   cache_hit = 0;
   cache_miss = 0;
@@ -135,6 +135,9 @@ bool Global::runDecmod(double start_time){
       //cout << "decmod:" << i << endl;
       void (Decmod::*func)() = decmod[i].next_event.second;
       (decmod[i].*func)();
+      if(decmod[i].next_event.first < next_time){
+	next_time = decmod[i].next_event.first;
+      }
     }
   }
   return true; // **
