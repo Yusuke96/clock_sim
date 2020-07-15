@@ -140,6 +140,7 @@ bool Global::runDecmod(double start_time){
       }
     }
   }
+  if(next_time == 55555){next_time = 0;}
   return true; // **
 }
 
@@ -162,7 +163,6 @@ void Global::reportResult(){
     }
   }
   cout << "--------------------RESULT--------------------" << endl;
-  cout << cache_hit << ",  " << cache_miss << endl;
   cout << "Number of packets: " << num_of_packets << endl;
   cout << "Cache hit rate: " << hit_rate << " %" << endl;
   cout << "Dram access rate: " << float(dram_read)/float(num_of_proc_packets) << " %" << endl;
