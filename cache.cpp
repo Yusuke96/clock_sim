@@ -7,8 +7,7 @@ Cache::Cache(){
 Cache::~Cache(){;}
 
 bool Cache::access(Packet p){
-  p.timestamp += global.clock_cycle;
-  
+  //p.timestamp += global.clock_cycle;
   for(auto it = this->entry.begin(); it != this->entry.end(); it++){
     if(*it == p.hash){
       this->entry.erase(it);
@@ -16,8 +15,7 @@ bool Cache::access(Packet p){
       global.cache_hit++;
       return true;
     }
-  }
-  
+  }  
   global.cache_miss++;
   return false;
 }

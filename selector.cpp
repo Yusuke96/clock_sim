@@ -63,6 +63,8 @@ bool Selector::inputPacket(double start_time, double end_time){
 
 bool Selector::allocatePacket(){
   if(!q_selector.empty()){
+    //fprintf(stderr,"The number of readed packets:%ld\n",global.num_of_packets);
+    //fprintf(stderr, "\033[1A");
     Packet p = q_selector.front();
     std::string sip = p.sip;
     std::string dip = p.dip;

@@ -3,14 +3,12 @@
 Global global;
 
 int main(int argc, char *argv[]){
-  //Clock clock;
-  //Selector selector;
-  //Packet p;
+  // setup
   global.readConf(argc, argv);
   global.showConf();
   global.initSim();
   global.selector->openTracefile();
-  
+  // main
   while(!global.checkComplete() || !global.trace_empty){
     double current_time = global.clock->GetTime();
     if(current_time < global.next_time){
@@ -21,7 +19,7 @@ int main(int argc, char *argv[]){
       global.clock->Advance();
     }
   }
-
+  // result
   global.reportResult();
   
   return 0;

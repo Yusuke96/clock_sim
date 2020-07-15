@@ -14,6 +14,9 @@ void Decmod::inQueue(Packet p){
 //--------------------------------------------------------------------
 void Decmod::deQueue(){
   if(!this->q_decmod.empty()){
+    // 進捗表示
+    //fprintf(stderr,"The number of decoded packets:%ld\n",global.num_of_proc_packets);
+    //fprintf(stderr, "\033[1A");
     //cout << "*Decmod[" << this->mod_num << "]: deQueue" << endl;
     global.num_of_proc_packets++;
     //cout << global.num_of_proc_packets << endl;
@@ -110,8 +113,11 @@ void Decmod::cacheWrite(){
   // cacheから追い出しが発生する場合(write back)
   if(*global.cache[this->current_cache_num].entry.begin() != this->current_packet.hash){
     // 追い出されたストリームの格納先をDRAMに指定
-    global.table[this->mod_num].m[*global.cache[this->current_cache_num].entry.begin()].first = -1;
-    //this->current_cache_num = -1; // -1 == DRAM これいる？？
+    if(global.table[this->mod_num].m[*global.cache[this->current_cache_num].entry.begin()].first == this->current_cache_num){
+      global.table[this->mod_num].m[*global.cache[this->current_cache_num].entry.begin()].first = -1;
+    }else{
+      //cout << "STOP:" << global.num_of_proc_packets << endl;
+    }
     this->next_event.first += global.delay_cache + global.delay_table;
   }
   // エントリの置換
@@ -123,7 +129,7 @@ void Decmod::cacheWrite(){
   this->next_event.second = &Decmod::tableUpdate;
 }
 
-void Decmod::tableUpdate(){// どこにいれよう
+void Decmod::tableUpdate(){
   //cout << "*Decmod[" << this->mod_num << "]: tableUpdate" << endl;
   global.table[this->mod_num].update(this->current_packet.hash,this->current_cache_num,current_dict_size);
   // トランザクションの最後であるため、キューに次のパケットがあるか確認
@@ -133,7 +139,6 @@ void Decmod::tableUpdate(){// どこにいれよう
     global.decmod_empty[this->mod_num] = false;
   }
   this->next_event.first += global.delay_table;
-  cout << this->next_event.first << endl;
   this->next_event.second = &Decmod::deQueue;
 }
 

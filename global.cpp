@@ -140,6 +140,7 @@ bool Global::runDecmod(double start_time){
       }
     }
   }
+  if(next_time == 55555){next_time = 0;}
   return true; // **
 }
 
@@ -155,14 +156,13 @@ bool Global::checkComplete(){
 
 void Global::reportResult(){
   float hit_rate = float(cache_hit) / (float(cache_hit) + float(cache_miss));
-  hit_rate = float(cache_hit) / float(num_of_proc_packets);
+  //hit_rate = float(cache_hit) / float(num_of_proc_packets);
   for(u_int i=0;i<num_decmod;i++){
     if(time_end < decmod[i].next_event.first){
       time_end = decmod[i].next_event.first;
     }
   }
   cout << "--------------------RESULT--------------------" << endl;
-  cout << cache_hit << ",  " << cache_miss << endl;
   cout << "Number of packets: " << num_of_packets << endl;
   cout << "Cache hit rate: " << hit_rate << " %" << endl;
   cout << "Dram access rate: " << float(dram_read)/float(num_of_proc_packets) << " %" << endl;
