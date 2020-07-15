@@ -14,6 +14,9 @@ void Decmod::inQueue(Packet p){
 //--------------------------------------------------------------------
 void Decmod::deQueue(){
   if(!this->q_decmod.empty()){
+    // 進捗表示
+    fprintf(stderr,"The number of decoded packets:%ld\n",global.num_of_proc_packets);
+    fprintf(stderr, "\033[1A");
     //cout << "*Decmod[" << this->mod_num << "]: deQueue" << endl;
     global.num_of_proc_packets++;
     //cout << global.num_of_proc_packets << endl;

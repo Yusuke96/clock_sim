@@ -12,7 +12,6 @@ int main(int argc, char *argv[]){
   while(!global.checkComplete() || !global.trace_empty){
     double current_time = global.clock->GetTime();
     if(current_time < global.next_time){
-      cout << "settime:" << global.next_time << endl; 
       global.clock->SetTime(global.next_time);
     }else{
       global.runSelector(current_time);
