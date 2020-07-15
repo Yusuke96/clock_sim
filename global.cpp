@@ -156,7 +156,7 @@ bool Global::checkComplete(){
 
 void Global::reportResult(){
   float hit_rate = float(cache_hit) / (float(cache_hit) + float(cache_miss));
-  hit_rate = float(cache_hit) / float(num_of_proc_packets);
+  //hit_rate = float(cache_hit) / float(num_of_proc_packets);
   for(u_int i=0;i<num_decmod;i++){
     if(time_end < decmod[i].next_event.first){
       time_end = decmod[i].next_event.first;

@@ -7,7 +7,7 @@
 
 #TARGET=baseline_throughput
 #TARGET=prediction_dontcache_throughput
-TARGET=prediction_throughput_3x
+TARGET=clock_sim
 
 #------------------------------------------------------
 # Default Parameters
