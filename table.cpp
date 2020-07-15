@@ -6,7 +6,7 @@ Table::~Table(){}
 
 int Table::access(size_t hash){
   if(this->m.count(hash) == 0){ // table miss
-    return -1;
+    return -2;
   }else{  // table hit
     return m.at(hash).first; //return cache_num(0~7) or dram(-1)
   }

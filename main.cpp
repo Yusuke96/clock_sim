@@ -3,7 +3,7 @@
 Global global;
 
 int main(int argc, char *argv[]){
-  Clock clock;
+  //Clock clock;
   //Selector selector;
   //Packet p;
   global.readConf(argc, argv);
@@ -12,11 +12,14 @@ int main(int argc, char *argv[]){
   global.selector->openTracefile();
   
   while(!global.checkComplete() || !global.trace_empty){
-    double current_time = clock.GetTime();
-    global.runSelector(current_time);
-    //cout << "p1" << endl;
-    global.runDecmod(current_time);
-    clock.Advance();
+    double current_time = global.clock->GetTime();
+    if(current_time < global.next_time){
+      global.clock->SetTime(global.next_time);
+    }else{
+      global.runSelector(current_time);
+      global.runDecmod(current_time);
+      global.clock->Advance();
+    }
   }
 
   global.reportResult();

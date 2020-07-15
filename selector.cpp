@@ -31,6 +31,7 @@ bool Selector::inputPacket(double start_time, double end_time){
     getline(trace, line);
     if(trace.eof()){
       global.trace_empty = true;
+      global.next_time = 55555.0;
       return false;
     }//読み込むパケット無し
     p.id = packet_id;
@@ -39,7 +40,7 @@ bool Selector::inputPacket(double start_time, double end_time){
     string sip, dip;
     is.str(line);
     is >> p.timestamp >> p.length >> sip >> dip >> p.protocol >> p.sport >> p.dport >> p.comp_len >> p.decomp_len >> p.comp_ratio >> p.stream_id >> p.stream_size;
-
+    p.timestamp = global.clock_cycle * p.id; // ************ for throughput *******
     //一番初めのパケットの時刻を0とし、以降それとの差分でシミュレーションを行う
     if(p.id == 1){
       first_timestamp = p.timestamp;
@@ -51,6 +52,7 @@ bool Selector::inputPacket(double start_time, double end_time){
       p.timestamp += global.clock_cycle;
       q_selector.push(p);
     }else{
+      global.next_time = p.timestamp;
       packet_id --;
       trace.seekg(oldpos); // 現在処理するべきパケットではないので記録した位置までイテレータを戻して終了
       break;
@@ -70,7 +72,9 @@ bool Selector::allocatePacket(){
     p.hash = hash;
     p.timestamp += global.clock_cycle;
     q_selector.pop();
+    //cout << p.timestamp << endl;
     global.decmod[mod_num].inQueue(p); // 参照渡し?
+    
     if(global.decmod[mod_num].q_decmod.empty() || global.decmod[mod_num].once_flg == true){
       global.decmod[mod_num].next_event.first = p.timestamp + global.clock_cycle;
       global.decmod[mod_num].next_event.second = &Decmod::deQueue;

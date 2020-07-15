@@ -8,6 +8,6 @@ typedef unsigned int u_int;
 #include "table.hpp"
 #include "dram.hpp"
 #include "selector.hpp"
+#include "clock.hpp"
 #include "global.hpp"
 extern Global global;
-#include "clock.hpp"

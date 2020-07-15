@@ -12,7 +12,7 @@ Global::Global(){
   delay_dram=0.0;
   size_queue=0;
   //clock cycle
-  clock_cycle = 0.00001;
+  clock_cycle = 1.0/(1000*1000*1000);
   //results
   cache_hit = 0;
   cache_miss = 0;
@@ -22,6 +22,7 @@ Global::Global(){
   num_of_packets = 0;
   cache_capacity = 32; //******************************
   trace_empty = false;
+  
 }
 
 Global::~Global(){
@@ -105,6 +106,7 @@ void Global::initSim(){
   decmod = new Decmod[num_decmod];
   table = new Table[num_decmod];
   cache = new Cache[num_decmod];
+  clock = new Clock;
   dram = new Dram;
 
   decmod_empty = new bool[num_decmod];
@@ -133,6 +135,9 @@ bool Global::runDecmod(double start_time){
       //cout << "decmod:" << i << endl;
       void (Decmod::*func)() = decmod[i].next_event.second;
       (decmod[i].*func)();
+      if(decmod[i].next_event.first < next_time){
+	next_time = decmod[i].next_event.first;
+      }
     }
   }
   return true; // **
@@ -150,6 +155,7 @@ bool Global::checkComplete(){
 
 void Global::reportResult(){
   float hit_rate = float(cache_hit) / (float(cache_hit) + float(cache_miss));
+  hit_rate = float(cache_hit) / float(num_of_proc_packets);
   for(u_int i=0;i<num_decmod;i++){
     if(time_end < decmod[i].next_event.first){
       time_end = decmod[i].next_event.first;
@@ -158,8 +164,10 @@ void Global::reportResult(){
   cout << "--------------------RESULT--------------------" << endl;
   cout << cache_hit << ",  " << cache_miss << endl;
   cout << "Number of packets: " << num_of_packets << endl;
-  cout << "Cache hit rate: " << hit_rate << endl;
-  cout << "Decode throughput: " << std::fixed << std::setprecision(8) << ((proc_size*8) / (time_end*1000*1000)) << " Mbps" << endl;
+  cout << "Cache hit rate: " << hit_rate << " %" << endl;
+  cout << "Dram access rate: " << float(dram_read)/float(num_of_proc_packets) << " %" << endl;
+  cout << "Time: " << time_end << " sec" << endl;
+  cout << "Decoding throughput: " << std::fixed << std::setprecision(5) << ((proc_size*8) / (time_end*1000*1000*1000)) << " Gbps" << endl;
   cout << "----------------------------------------------" << endl;
 }
 
